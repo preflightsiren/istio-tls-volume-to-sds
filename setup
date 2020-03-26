@@ -1,0 +1,20 @@
+#!/bin/bash
+
+kind create cluster
+export KUBECONFIG="$(kind get kubeconfig-path --name="kind")"
+
+istioctl manifest apply -y
+
+kubectl apply -f cert-manager.yaml
+kubectl apply -f cert.yaml
+
+kubectl run httpbin --image=citizenstig/httpbin
+kubectl expose deployment httpbin --port 8000
+
+kubectl apply -f gateway.yaml
+kubectl apply -f vs.yaml
+
+kubectl port-forward svc/istio-ingressgateway 8443:443 &
+
+curl -vk https://localhost:8443
+

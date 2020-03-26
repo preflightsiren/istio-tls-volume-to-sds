@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: selfsigning-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: "test.k8s.local"
+  namespace: istio-system
+spec:
+  secretName: istio-ingressgateway-certs
+  commonName: test.k8s.local
+  issuerRef:
+    name: selfsigning-issuer
+    kind: ClusterIssuer
